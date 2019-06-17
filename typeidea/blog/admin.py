@@ -4,9 +4,19 @@ from django.urls import reverse
 from .models import Post, Category, Tag
 from .adminforms import PostAdminForm
 from typeidea.custom_site import custom_site
+from .adminforms import PostAdminForm
+from django.contrib.admin.models import LogEntry
+from typeidea.base_admin import BaseOwnerAdmin
+
+class PostInline(admin.TabularInline):
+    fields = ('title', 'desc')
+    extra = 1
+    model = Post
+
 
 @admin.register(Category, site=custom_site)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(BaseOwnerAdmin):
+    inlines = [PostInline]
     list_display = ('name', 'status', 'is_nav', 'created_time','post_count')
     fields = ('name', 'status', 'is_nav', 'owner', )
 
@@ -14,20 +24,11 @@ class CategoryAdmin(admin.ModelAdmin):
         return obj.post_set.count()
     post_count.short_description = '文章数量'
 
-    def save_model(self, request, obj, form, change):
-        obj.owner = request.user
-        return super().save_model(request, obj, form, change)
-
 
 @admin.register(Tag, site=custom_site)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(BaseOwnerAdmin):
     list_display = ('name', 'status', 'created_time')
     fields = ('name', 'status')
-
-    def save_model(self, request, obj, form, change):
-        obj.owner = request.user
-        return super().save_model(request, obj, form, change)
-
 
 
 class CategoryOwnerFilter(admin.SimpleListFilter):
@@ -44,15 +45,14 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
             return queryset.filter(category_id=self.value())
         return queryset
 
-
 @admin.register(Post, site=custom_site)
-class PostAdmin(admin.ModelAdmin):
+class PostAdmin(BaseOwnerAdmin):
     form = PostAdminForm
     list_display = [
         'title', 'category', 'status', 'created_time', 'operator', 'owner'
     ]
-    list_display_links = ['category',]
-    list_filter = [CategoryOwnerFilter]
+    list_display_links = []
+    list_filter = [CategoryOwnerFilter,]
     search_fields = ['title', 'category__name']
 
     actions_on_top = True
@@ -87,7 +87,8 @@ class PostAdmin(admin.ModelAdmin):
         })
     )
 
-    filter_horizontal = ('tag',)
+    #filter_horizontal = ('tag',)
+    filter_vertical = ('tag', )
 
     def operator(self, obj):
         return format_html(
@@ -96,18 +97,14 @@ class PostAdmin(admin.ModelAdmin):
         )
     operator.short_description = '操作'
 
-    def save_model(self, request, obj, form, change):
-        obj.owner = request.user
-        return super().save_model(request, obj, form, change)
-    
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.filter(owner=request.user)
+class Media:
+    css = {
+        'all' : ("https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css",),
+    }
+    js = ('https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.js',)
 
-class PostInline(admin.TabularInline):
-    fields = ('title', 'desc')
-    extra = 1
-    model = Post
 
-class CategoryAdmin(admin.ModelAdmin):
-    inlines = [PostInline, ]
+# 操作日志利用django自带的LogEntry
+@admin.register(LogEntry, site=custom_site)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ['action_time', 'content_type_id', 'object_repr', 'object_id', 'action_flag', 'user', 'change_message']
