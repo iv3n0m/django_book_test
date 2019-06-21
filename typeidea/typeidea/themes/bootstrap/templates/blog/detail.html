@@ -1,5 +1,5 @@
-<!-- {% extends "./base.html" %}
-{% load comment_block %}
+{% extends "./base.html" %}
+
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block extra_head %}
@@ -8,7 +8,7 @@
 <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
 
-{% blcok main %}
+{% block main %}
 {% if post %}
 <h1>{{ post.title }}</h1>
 <div>
@@ -25,10 +25,8 @@
         {{ post.content_html }}
         {% endautoescape %}
     </p>
-    {% endif %}
 
-    {% comment_block request.path %}
-{% endblock %} -->
+{% endblock %}
 
 <hr>
 <div class="comment">
