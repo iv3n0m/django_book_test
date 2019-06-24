@@ -77,9 +77,13 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, verbose_name="标签")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="作者")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    content_html = models.TextField(verbose_name="正文HTML代码", blank=True, editable=False)
 
     pv = models.PositiveIntegerField(default=1)
     uv = models.PositiveIntegerField(default=1)
+
+    # def save(self, *args, **kwargs):
+    #     self.content_html = m
 
 
     class Meta:
