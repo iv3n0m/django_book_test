@@ -19,6 +19,9 @@ from .custom_site import custom_site
 from blog.views import IndexView, CategoryView, TagView, PostDetailView, SearchView, AuthorView
 from config.views import LinkListView
 from comment.views import CommentView
+
+from blog.rss import LatestPostFeed
+from blog.sitemap import PostSitemap
 # urlpatterns = [
 #     re_path(r'^$', post_list, name='index'),
 #     re_path(r'^category/(?P<category_id>\d+)/$', post_detail, name='category-list'),
@@ -39,6 +42,8 @@ urlpatterns = [
     re_path(r'^comment/$', CommentView.as_view(), name='comment'),
     re_path(r'^search/$', SearchView.as_view(), name='search'),
     re_path(r'^author/(?P<owner_id>\d+)/$', AuthorView.as_view(), name='author'),
+    re_path(r'^rss|feed', LatestPostFeed, name='rss'),
+    re_path(r'^sitemap\.xml$', sitemap_views.sitemmap, {'sitemaps': {'posts':PostSitemap}}),
     re_path(r'^super_admin/', admin.site.urls, name='super-admin'),
     re_path(r'^admin/', custom_site.urls, name='admin'),
 ]

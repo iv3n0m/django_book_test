@@ -1,5 +1,8 @@
+import mistune
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.functional import cached_property
 
 class Category(models.Model):
     STATUS_NORMAL = 1
@@ -20,22 +23,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-    @classmethod
-    def get_navs(cls):
-        categories = cls.objects.filter(status=cls.STATUS_NORMAL)
-        nav_categories = []
-        normal_categories = []
-        for cate in categories:
-            if cate.is_nav:
-                nav_categories.append(cate)
-            else:
-                normal_categories.append(cate)
-
-        return {
-            'navs': nav_categories,
-            'categories': normal_categories,
-        }
 
 
 class Tag(models.Model):
@@ -82,9 +69,6 @@ class Post(models.Model):
     pv = models.PositiveIntegerField(default=1)
     uv = models.PositiveIntegerField(default=1)
 
-    # def save(self, *args, **kwargs):
-    #     self.content_html = m
-
 
     class Meta:
         verbose_name = verbose_name_plural = '文章'      
@@ -92,6 +76,19 @@ class Post(models.Model):
    
     def __str__(self):
         return self.title
+
+
+    def save(self, *args, **kwargs):
+        if self.is_md:
+            self.content_html = mistune.markdown(self.content)
+        else:
+            self.content_html = self.content
+        super().save(*args, **kwargs)
+
+
+    @cached_property
+    def tags(self):
+        return ','.join(self.tag.value_list('name', flat=True))
 
 
     @staticmethod
