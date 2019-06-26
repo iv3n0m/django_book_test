@@ -12,7 +12,7 @@ class ExtendedRSSFed(Rss201rev2Feed):
 
 
 class LatestPostFeed(Feed):
-    feed_type = Rss201rev2Feed
+    feed_type = ExtendedRSSFed
     title = "Typeidea Blog System"
     link = "/rss"
     description = "typeidea is a blog system power by django"

@@ -7,6 +7,7 @@ from typeidea.custom_site import custom_site
 from .adminforms import PostAdminForm
 from django.contrib.admin.models import LogEntry
 from typeidea.base_admin import BaseOwnerAdmin
+from xadmin.layout import Row, Fieldset
 
 class PostInline(admin.TabularInline):
     fields = ('title', 'desc')
@@ -58,6 +59,8 @@ class PostAdmin(BaseOwnerAdmin):
     actions_on_top = True
     actions_on_bottom = True
 
+    save_on_top = True
+
     #exclude = ('owner', 'title',)
 
     # fields = (
@@ -68,24 +71,21 @@ class PostAdmin(BaseOwnerAdmin):
     #     'tag',
     # )
 
-    fieldsets = (
-        ('基础配置', {
-            'description': '基础配置描述',
-            'fields': (
-                'title', 'category', 'status',
-            ),
-        }),
-        ('内容', {
-            'fields': (
-                'desc',
-                'content',
-            ),
-        }),
-        ('额外信息', {
-            'classes': ('collapse',),
-            'fields':('tag', ),
-        })
+    from_layout = (
+        Fieldset(
+            '基础信息',
+            Row('title', 'category'),
+            'status',
+            'tag',
+        ),
+        Fieldset(
+            '内容信息',
+            'desc',
+            'content',
+        )
+
     )
+
 
     #filter_horizontal = ('tag',)
     filter_vertical = ('tag', )

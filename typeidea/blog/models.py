@@ -86,9 +86,9 @@ class Post(models.Model):
         super().save(*args, **kwargs)
 
 
-    @cached_property
-    def tags(self):
-        return ','.join(self.tag.value_list('name', flat=True))
+    # @cached_property
+    # def tags(self):
+    #     return ','.join(self.tag.value_list('name', flat=True))
 
 
     @staticmethod
