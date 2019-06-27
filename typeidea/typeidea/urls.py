@@ -13,9 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import xadmin
 from django.contrib import admin
 from django.urls import path, re_path
-from .custom_site import custom_site
 from blog.views import IndexView, CategoryView, TagView, PostDetailView, SearchView, AuthorView
 from config.views import LinkListView
 from comment.views import CommentView
@@ -24,16 +24,9 @@ from django.contrib.sitemaps import views as sitemap_views
 from blog.rss import LatestPostFeed
 from blog.sitemap import PostSitemap
 
-# urlpatterns = [
-#     re_path(r'^$', post_list, name='index'),
-#     re_path(r'^category/(?P<category_id>\d+)/$', post_detail, name='category-list'),
-#     re_path(r'^tag/(?P<tag_id>\d+)/$', post_list, name='tag-list'),   
-#     #re_path(r'^post/(?P<pk>\d+).html$', post_detail, name='post-detail'),
-#     re_path(r'^post/(?P<post_id>\d+).html$', PostDetailView.as_view(), name='post-detail'),   
-#     re_path(r'^links/$', links, name='links'),
-#     re_path(r'^super_admin/', admin.site.urls, name='super-admin'),
-#     re_path(r'^admin/', custom_site.urls, name='admin'),
-# ]
+from .autocomplete import CategoryAutocomplete, TagAutocomplete
+
+
 
 urlpatterns = [
     re_path(r'^$', IndexView.as_view(), name='index'),
@@ -46,6 +39,8 @@ urlpatterns = [
     re_path(r'^author/(?P<owner_id>\d+)/$', AuthorView.as_view(), name='author'),
     re_path(r'^rss|feed', LatestPostFeed, name='rss'),
     re_path(r'^sitemap\.xml$', sitemap_views.sitemap, {'sitemaps': {'posts':PostSitemap}}),
+    re_path(r'^category-autocompletes/$', CategoryAutocomplete.as_view(), name='category-autocomplete'),
+    re_path(r'^tag-autocomplete/$', TagAutocomplete.as_view(), name='tag-autocomplete'),
     re_path(r'^super_admin/', admin.site.urls, name='super-admin'),
-    re_path(r'^admin/', custom_site.urls, name='admin'),
+    re_path(r'^admin/', xadmin.site.urls, name='xadmin'),
 ]
