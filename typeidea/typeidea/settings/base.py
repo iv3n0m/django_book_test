@@ -40,6 +40,9 @@ INSTALLED_APPS = [
 
     'dal',
     'dal_select2',
+
+    'ckeditor',
+    'ckeditor_uploader',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,3 +135,20 @@ STATICFILES_DIRS = [
 
 XADMIN_TITLE = '无量山管理后台'
 XADMIN_FOOTER_TITLE = 'power by v3n0m(大叔)'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar':'full',
+        'height':300,
+        'width':800,
+        'tabSpaces':4,
+        'extraPlugins':'codesnippet',
+    }
+}
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+CKEDITOR_UPLOAD_PATH = "article_images"
+
+
+DEFAULT_FILE_STORAGE = 'typeidea.storage.WatemarkStorage'

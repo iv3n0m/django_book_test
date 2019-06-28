@@ -1,6 +1,7 @@
 from django import forms
 from .models import Comment
 import mistune
+
 class CommentForm(forms.ModelForm):
     nickname = forms.CharField(
         label = '昵称',
